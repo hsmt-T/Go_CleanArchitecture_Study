@@ -25,11 +25,19 @@ func StartEcho() {
 	}
 
 	repo := repository.NewUserSupabase(db)
-	presenter := presenter.NewCreateUserPresenter()
-	uc := usecase.NewCreateUserInteractor(repo, presenter)
-	handler := echoapi.NewCreateUserHandler(uc)
+
+	//create
+	createPresenter := presenter.NewCreateUserPresenter()
+	createUc := usecase.NewCreateUserInteractor(repo, createPresenter)
+	createHandler := echoapi.NewCreateUserHandler(createUc)
+
+	//findByID
+	findByIDPresenter := presenter.NewFindUserPresenter()
+	findByIDUc := usecase.NewFindUserByIDInteractor(repo,findByIDPresenter)
+	findByIDHandler := echoapi.NewFindUserHandler(findByIDUc)
 	
-	e.POST("/users", handler.Handle)
+	e.POST("/users", createHandler.Handle)
+	e.GET("/users/:id", findByIDHandler.Handle)
 
 	e.Start(":8080")
 }
