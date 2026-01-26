@@ -1,6 +1,7 @@
 package usecase_test
 
 import (
+	"errors"
 	"go_cleanArchitecture_study/adapter/presenter"
 	"go_cleanArchitecture_study/domain"
 	"go_cleanArchitecture_study/usecase"
@@ -18,6 +19,16 @@ func (m *mockFindByIDUserRepository) Create(user domain.User) (domain.User, erro
 
 func (m *mockFindByIDUserRepository) FindByID(id domain.UserID) (domain.User, error) {
 	return m.user, nil
+}
+
+type mockFindByIDNotFoundRepository struct {}
+
+func (m *mockFindByIDNotFoundRepository) Create(user domain.User) (domain.User, error) {
+	return user, nil
+}
+
+func (m *mockFindByIDNotFoundRepository) FindByID(id domain.UserID) (domain.User, error) {
+	return domain.User{}, errors.New("user not found")
 }
 
 func TestFindByUser_Success (t *testing.T) {
@@ -54,5 +65,20 @@ func TestFindByUser_Success (t *testing.T) {
 
 	if output.Email != "test@gmail.com" {
 		t.Errorf("Emailがmock通りじゃない %v", output.ID)
+	}
+}
+
+func TestFindByIDNotfaundError(t *testing.T) {
+	repo := &mockFindByIDNotFoundRepository{}
+	presenter := presenter.NewFindUserPresenter()
+
+	uc := usecase.NewFindUserByIDInteractor(repo, presenter)
+
+	_, err := uc.Execute(usecase.FindUserByIDInput{
+		ID: "not-exist-id",
+	})
+
+	if err == nil {
+		t.Fatal("ユーザーが存在しないのに error が帰ってこない")
 	}
 }
