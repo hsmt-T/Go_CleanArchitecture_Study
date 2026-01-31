@@ -5,8 +5,8 @@ import (
 	"go_cleanArchitecture_study/domain"
 	"go_cleanArchitecture_study/usecase"
 	"testing"
+	"time"
 )
-
 
 //RepositoryはMockを使う
 type mockUserRepository struct {
@@ -28,7 +28,12 @@ func TestCreteUser_Success(t *testing.T) {
 	repo := &mockUserRepository{}
 	presenter := presenter.NewCreateUserPresenter()
 
-	uc := usecase.NewCreateUserInteractor(repo, presenter)
+	fixedTime := time.Date(2024, 1, 1, 10, 0, 0, 0, time.UTC)
+	clock := &DummyClock{
+		fixed: fixedTime,
+	}
+
+	uc := usecase.NewCreateUserInteractor(repo, presenter, clock)
 
 	input := usecase.CreateUserInput{
 		Name: "test",
@@ -56,13 +61,23 @@ func TestCreteUser_Success(t *testing.T) {
 	if output.CreatedAt.IsZero() {
 		t.Error("CreatedAtがない")
 	}
+
+	if !output.CreatedAt.Equal(fixedTime) {
+		t.Errorf("CreatedAtが固定時間になっていない%v", output.CreatedAt)
+	}
 }
 
 //わざとエラーが出るInputにして出るかTest
 func TestCreateUser_ValidationError(t *testing.T) {
 	repo := &mockUserRepository{}
 	presenter := presenter.NewCreateUserPresenter()
-	uc := usecase.NewCreateUserInteractor(repo, presenter)
+
+	fixedTime := time.Date(2024, 1, 1, 10, 0, 0, 0, time.UTC)
+	clock := &DummyClock{
+		fixed: fixedTime,
+	}
+
+	uc := usecase.NewCreateUserInteractor(repo, presenter, clock)
 
 	input := usecase.CreateUserInput{
 		Name: "",

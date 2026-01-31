@@ -4,6 +4,7 @@ import (
 	echoapi "go_cleanArchitecture_study/adapter/api/action/echo"
 	"go_cleanArchitecture_study/adapter/presenter"
 	"go_cleanArchitecture_study/adapter/repository"
+	"go_cleanArchitecture_study/infrastructure/clock"
 	"go_cleanArchitecture_study/infrastructure/database"
 	"go_cleanArchitecture_study/usecase"
 	"log"
@@ -30,7 +31,8 @@ func StartEcho() {
 
 	//create
 	createPresenter := presenter.NewCreateUserPresenter()
-	createUc := usecase.NewCreateUserInteractor(repo, createPresenter)
+	RealClock := clock.RealClock{}
+	createUc := usecase.NewCreateUserInteractor(repo, createPresenter, RealClock)
 	createHandler := echoapi.NewCreateUserHandler(createUc)
 
 	//findByID
