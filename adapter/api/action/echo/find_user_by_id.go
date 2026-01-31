@@ -18,6 +18,12 @@ func NewFindUserHandler(uc usecase.FindUserByIDUseCase) FindUserHandler {
 func (h FindUserHandler) Handle(c echo.Context) error {
 	id := c.Param("id")
 
+	if id == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error" : "idが空",
+		})
+	}
+
 	input := usecase.FindUserByIDInput{
 		ID: id,
 	}
