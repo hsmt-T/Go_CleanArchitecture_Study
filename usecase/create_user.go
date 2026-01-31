@@ -34,14 +34,16 @@ type CreateUserPresenter interface {
 type createUserInteractor struct {
 	userRepo domain.UserRepository
 	presenter CreateUserPresenter
+	clock Clock
 }
 
 //コンストラクタ
 
-func NewCreateUserInteractor(repo domain.UserRepository, presenter CreateUserPresenter) CreateUserUseCase {
+func NewCreateUserInteractor(repo domain.UserRepository, presenter CreateUserPresenter, clock Clock) CreateUserUseCase {
 	return &createUserInteractor{
 		userRepo: repo,
 		presenter: presenter,
+		clock: clock,
 	}
 }
 
@@ -54,12 +56,14 @@ func (i *createUserInteractor) Execute(input CreateUserInput) (CreateUserOutput,
 		return CreateUserOutput{}, errors.New("なまえとメールが未記入です")
 	}
 
+	now := i.clock.Now()
+
 	//domainのUsers生成
 	user := domain.NewUser(
-		domain.UserID(generateUUID()),
+		domain.NewUserID(),
 		input.Name,
 		input.Email,
-		time.Now(),
+		now,
 	)
 
 	// Repository（インターフェイス）に保存する
@@ -69,10 +73,4 @@ func (i *createUserInteractor) Execute(input CreateUserInput) (CreateUserOutput,
 	}
 
 	return i.presenter.Output(createdUser), nil
-}
-
-// 仮のUUID生成（あとでちゃんとした実装に差し替える）
-
-func generateUUID() string {
-	return time.Now().Format("20060102150405.000000000")
 }

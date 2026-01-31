@@ -4,10 +4,10 @@ go 1.25.1
 
 require (
 	github.com/gin-gonic/gin v1.11.0
-	github.com/go-playground/assert/v2 v2.2.0
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.15.0
 	github.com/lib/pq v1.10.9
+	github.com/satori/go.uuid v1.2.0
 	github.com/stretchr/testify v1.11.1
 )
 
