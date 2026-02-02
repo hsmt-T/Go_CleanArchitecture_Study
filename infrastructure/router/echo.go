@@ -1,6 +1,7 @@
 package router
 
 import (
+	"context"
 	echoapi "go_cleanArchitecture_study/adapter/api/action/echo"
 	"go_cleanArchitecture_study/adapter/presenter"
 	"go_cleanArchitecture_study/adapter/repository"
@@ -18,16 +19,26 @@ func StartEcho() {
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	
 
 	// ローカルDB
 	// repo := repository.NewUserMemoryRepository()
-	db, err := supabase.NewSupabase()
+
+	//NeonDB
+	db, err := database.NewNeon(context.Background())
+
+	//supabase
+	// db, err := database.NewSupabase()
+
 
 	if err != nil {
 		log.Fatal("DB接続失敗", err)
 	}
+	// supabaseRepo
+	// repo := repository.NewUserSupabase(db)
 
-	repo := repository.NewUserSupabase(db)
+	// neonRepo
+	repo := repository.NewUserNeon(db)
 
 	//create
 	createPresenter := presenter.NewCreateUserPresenter()

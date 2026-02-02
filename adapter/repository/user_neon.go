@@ -2,25 +2,27 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 	"go_cleanArchitecture_study/domain"
+	"time"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type UserSupabase struct {
-	db *sql.DB
+type UserNeon struct {
+	db *pgxpool.Pool
 }
 
-func NewUserSupabase(db *sql.DB) *UserSupabase {
-	return &UserSupabase{
+func NewUserNeon(db *pgxpool.Pool) *UserNeon {
+	return &UserNeon{
 		db: db,
 	}
 }
 
-func (r *UserSupabase) Create(user domain.User) (domain.User, error) {
+func (r *UserNeon) Create(user domain.User) (domain.User, error) {
 
 	query := `INSERT INTO users (id, name, email, created_at) VALUES ($1, $2, $3, $4)`
 
-	_, err := r.db.ExecContext(
+	_, err := r.db.Exec(
 		context.Background(),
 		query,
 		user.ID(),
@@ -36,8 +38,9 @@ func (r *UserSupabase) Create(user domain.User) (domain.User, error) {
 	return user, nil
 }
 
-func (r *UserSupabase) FindByID(id domain.UserID) (domain.User, error) {
+func (r *UserNeon) FindByID(id domain.UserID) (domain.User, error) {
 	row := r.db.QueryRow(
+		context.Background(),
 		`SELECT id, name, email, created_at FROM users WHERE id = $1`,
 		id,
 	)
@@ -46,7 +49,7 @@ func (r *UserSupabase) FindByID(id domain.UserID) (domain.User, error) {
 		uid 		string
 		name		string
 		email		string
-		createdAt	sql.NullTime
+		createdAt	time.Time
 	)
 
 	if err := row.Scan(&uid, &name, &email, &createdAt); err != nil {
@@ -57,7 +60,7 @@ func (r *UserSupabase) FindByID(id domain.UserID) (domain.User, error) {
 		domain.UserID(uid),
 		name,
 		email,
-		createdAt.Time,
+		createdAt,
 	)
 
 	return user, nil
