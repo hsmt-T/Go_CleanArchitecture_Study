@@ -40,10 +40,7 @@ func (u User) CreatedAt() time.Time {
 	return u.createdAt
 }
 
-
-// 	Repository インターフェース
-//	何をするかだけここで定義して再利用できるようにしている
 type UserRepository interface {
-	Create(user User) (User, error)
+	Create(user User) (User, error) 
 	FindByID(id UserID) (User, error)
 }
