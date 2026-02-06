@@ -32,7 +32,7 @@ type CreateUserPresenter interface {
 
 // domain に依存する/repository を使う が　抽象に依存
 type createUserInteractor struct {
-	userRepo domain.UserRepository
+	userRepo domain.UserRepository 
 	presenter CreateUserPresenter
 	clock Clock
 }

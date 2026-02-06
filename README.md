@@ -2,13 +2,25 @@
 
 Goクリーンアーキテクチャ学習 及び サンプルコード
 
-#参考
+#　クリーンアーキテクチャ
+インポートしていい向き
+router / main
+↓
+infrastructure
+↓
+adapter
+↓
+usecase
+↓
+domain
+
+#　参考
 
 https://zenn.dev/castingone_dev/articles/77ecac84226521
 
 https://github.com/GSabadini/go-clean-architecture
 
-#memo
+#　memo
 
 全テストを実行
 go test ./...

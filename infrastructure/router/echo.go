@@ -1,10 +1,11 @@
 package router
 
 import (
-	"context"
+	// "context"
 	echoapi "go_cleanArchitecture_study/adapter/api/action/echo"
 	"go_cleanArchitecture_study/adapter/presenter"
-	"go_cleanArchitecture_study/adapter/repository"
+	// "go_cleanArchitecture_study/adapter/repository"
+	repository "go_cleanArchitecture_study/adapter/repository/postgres"
 	"go_cleanArchitecture_study/infrastructure/clock"
 	"go_cleanArchitecture_study/infrastructure/database"
 	"go_cleanArchitecture_study/usecase"
@@ -23,12 +24,13 @@ func StartEcho() {
 
 	// ローカルDB
 	// repo := repository.NewUserMemoryRepository()
-
 	//NeonDB
-	db, err := database.NewNeon(context.Background())
-
+	// db, err := database.NewNeon(context.Background())
 	//supabase
-	// db, err := database.NewSupabase()
+	// db, err := database.NewSupabase()]
+
+	//posgres(supabase||Neon)
+	db, err := database.NewPostgresGorm()
 
 
 	if err != nil {
@@ -36,9 +38,9 @@ func StartEcho() {
 	}
 	// supabaseRepo
 	// repo := repository.NewUserSupabase(db)
-
 	// neonRepo
-	repo := repository.NewUserNeon(db)
+	// repo := repository.NewUserNeon(db)
+	repo := repository.NewUserPostgres(db)
 
 	//create
 	createPresenter := presenter.NewCreateUserPresenter()
