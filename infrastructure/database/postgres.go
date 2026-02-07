@@ -7,8 +7,14 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewPostgresGorm() (*gorm.DB, error) {
+func NewPostgresGorm() *gorm.DB {
+
 	dsn := os.Getenv("DATABASE_URL")
 
-	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+
+	return db
 }
